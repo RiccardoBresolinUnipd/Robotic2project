@@ -1,10 +1,11 @@
 function [pathGrid, pathWorldSmooth] = SolveMazeAStar(mazeMap, startGrid, goalGrid)
+    % Solves Maze Using A* Algorithm with Clearance Constraints
 
-    % Extract occupancy matrix
+    % Extract Occupancy Matrix
     occMatrix = occupancyMatrix(mazeMap);
     freeMask = ~occMatrix;
 
-    % Clearance map
+    % Clearance Map Ensures Minimum Distance from Walls
     distanceCells = bwdist(occMatrix == 1);
     minClearance = 2;
     clearanceMask = freeMask & (distanceCells >= minClearance);
@@ -13,7 +14,7 @@ function [pathGrid, pathWorldSmooth] = SolveMazeAStar(mazeMap, startGrid, goalGr
         error('Clearance removed all free space.');
     end
 
-    % Adjust start/goal if needed
+    % Adjust Start/Goal if Needed, Move to Nearest Valid Point if Invalid
     [freeRows, freeCols] = find(clearanceMask);
 
     sr = startGrid(1); sc = startGrid(2);
@@ -31,11 +32,11 @@ function [pathGrid, pathWorldSmooth] = SolveMazeAStar(mazeMap, startGrid, goalGr
         goalGrid = [freeRows(idx), freeCols(idx)];
     end
 
-    % Planner map
+    % Planner Map
     planningMatrix = ~clearanceMask;
     planningMap = binaryOccupancyMap(planningMatrix, mazeMap.Resolution);
 
-    % A* search
+    % A* Search Finds Path from Start to Goal
     planner = plannerAStarGrid(planningMap);
     pathGrid = plan(planner, startGrid, goalGrid);
 
@@ -43,9 +44,9 @@ function [pathGrid, pathWorldSmooth] = SolveMazeAStar(mazeMap, startGrid, goalGr
         error('A* failed to find a path.');
     end
 
-    % Convert to world coordinates
+    % Convert to World Coordinates
     pathWorld = grid2world(mazeMap, pathGrid);
 
-    % Smooth path
+    % Smooth Path
     pathWorldSmooth = SmoothPathSpline(pathWorld, 5);
 end

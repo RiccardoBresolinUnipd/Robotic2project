@@ -1,4 +1,5 @@
 clear; close all; clc;
+addpath("./ControlUtils/")
 
 %% ------------------ Parameters ----------------------
 dt = 0.01;          
@@ -48,13 +49,13 @@ for k = 1:length(t)
 
 end
 
-save('dati.mat', 'x', 'y', 'xd', 'yd');
+save('data.mat', 'x', 'y', 'xd', 'yd');
 
-%% -------------------- PLOT RISULTATI ---------------------------
+%% -------------------- PLOT RESULTS ---------------------------
 figure; hold on; grid on; axis equal;
 plot(xd, yd, 'r--', 'LineWidth',1.5);
 plot(x, y, 'b', 'LineWidth',2);
-legend("Traiettoria desiderata", "Robot");
+legend("Desired Trajectory", "Robot");
 title("Tracking");
 xlabel("x"); ylabel("y");
 

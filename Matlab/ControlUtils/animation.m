@@ -1,7 +1,7 @@
 clc; clear; close all;
 
 %% Load the data
-load('dati.mat'); 
+load('data.mat'); 
 
 %% figure
 figure;
