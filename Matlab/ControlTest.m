@@ -2,7 +2,7 @@ clear; close all; clc;
 addpath("./ControlUtils/")
 
 %% ------------------ Parameters ----------------------
-dt = 0.01;          
+dt = 0.001;          
 T  = 30;            % time
 t  = 0:dt:T;
 
@@ -12,7 +12,7 @@ y_curr = 0;
 theta_curr = 0;
 
 % controller
-linear = true;      % true = linear controller  - false = non-linear controller
+linear = false;      % true = linear controller  - false = non-linear controller
 
 % Vectors to save the simulation
 x = zeros(length(t),1);
@@ -20,7 +20,7 @@ y = zeros(length(t),1);
 theta = zeros(length(t),1);
 
 %% ---------------- Trajectory ----------------------
-[xd, yd, dxd, dyd, ddxd, ddyd] = trajectory(x_curr, y_curr, t);
+[xd, yd, dxd, dyd, ddxd, ddyd] = trajectory(x_curr, y_curr, t,"oval");
 
 %% ---------------- Simulation ----------------------
 for k = 1:length(t)

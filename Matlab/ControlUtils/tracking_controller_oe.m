@@ -2,7 +2,7 @@ function [v, w] = tracking_controller_oe(xd, yd, thetad, x, y, theta, vd, wd, li
 
 eps_v = 1e-6;
 b = 0.75;
-
+thetad = wrapTo2Pi(thetad);
 T = [cos(theta), -b*sin(theta);
     sin(theta),   b*cos(theta)];
 Tinv = [cos(theta), sin(theta);

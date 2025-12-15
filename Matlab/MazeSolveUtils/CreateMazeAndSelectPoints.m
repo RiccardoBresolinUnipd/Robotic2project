@@ -21,13 +21,14 @@ function [mazeMap, occupancyMatrixPlot, startGrid, goalGrid, figureMaze, axesMaz
 
     plot(axesMaze, startCol, startRow, 'go', 'MarkerSize', 10, 'LineWidth', 2);
 
-    title(axesMaze, 'Select GOAL point');
-    disp('Select GOAL point...');
+    % title(axesMaze, 'Select GOAL point');
+    % disp('Select GOAL point...');
+    % 
+    % [goalX, goalY] = ginput(1);
 
-    [goalX, goalY] = ginput(1);
-
-    goalRow = max(1, min(rowCount, round(goalY)));
-    goalCol = max(1, min(colCount, round(goalX)));
+    % goalRow = max(1, min(rowCount, round(goalY)));
+    % goalCol = max(1, min(colCount, round(goalX)));
+    goalRow = 38; goalCol = 38;
 
     if occupancyMatrixPlot(goalRow, goalCol) == 1
         error('Selected GOAL point is a wall.');

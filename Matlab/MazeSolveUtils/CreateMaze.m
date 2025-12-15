@@ -7,5 +7,5 @@ function mazeMap = CreateMaze(mazeProps)
 
     mazeMap = mapMaze(passageWidth, wallThickness, ...
         'MapSize', mapSize, 'MapResolution', mapResolution);
-
+    CutOutHole(mazeMap)
 end

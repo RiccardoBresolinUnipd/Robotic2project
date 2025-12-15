@@ -20,7 +20,7 @@ e(3) = thetad-theta;
     else
         % Non linear
         ro = 1/sqrt(2);
-        b = 30;
+        b = 3000;
         K1 = 2*ro*sqrt(b*vd+wd^2);
         K2 = b;
         K3 = K1;

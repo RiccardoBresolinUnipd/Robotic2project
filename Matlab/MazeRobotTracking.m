@@ -3,10 +3,11 @@ close all
 clc
 addpath("./MazeSolveUtils/")
 addpath("./ControlUtils/")
+rng(10)
 
 %% Parameters
 dt = 0.01;
-T  = 15;            % time
+T  = 25;            % time
 t  = 0:dt:T;
 
 % Controller
@@ -153,12 +154,20 @@ for k = 1:length(t)
     ddx_d = ddxd(k);
     ddy_d = ddyd(k);
 
-    % Differential Flatness
-    [x_d, y_d, theta_d, vd, wd] = differential_flatness(x_d, y_d, dx_d, dy_d, ddx_d, ddy_d);
+    tmp = world2grid(mazeMap,[x_curr, y_curr]);
+    xtemp = tmp(1); ytemp = tmp(2);
+    if (abs(xtemp - 38) < 15/2) && (abs(ytemp - 38) < 15/2)
+        target = struct("x",7.5, "y", 7.5, "theta", 0 );
+        gains = struct("kp",30, "kw", 300);
+        [v, w] = regulation_controller(x_curr,y_curr,theta_curr, target, gains);
+    else
+        % Differential Flatness
+        [x_d, y_d, theta_d, vd, wd] = differential_flatness(x_d, y_d, dx_d, dy_d, ddx_d, ddy_d);
 
-    % Tracking Controller
-    [v, w] = tracking_controller(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, vd, wd, linear);
-
+        % Tracking Controller
+        [v, w] = tracking_controller(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, vd, wd, linear);
+    end
+    
     % Unicycle Model
     [x_curr, y_curr, theta_curr] = unicycle_model(x_curr, y_curr, theta_curr, v, w, dt);
 
@@ -180,6 +189,6 @@ for k = 1:length(t)
     set(xErrorPlot, 'XData', t(1:k), 'YData', xError);
     set(yErrorPlot, 'XData', t(1:k), 'YData', yError);
 
-    drawnow
+    drawnow limitrate
 end
 
