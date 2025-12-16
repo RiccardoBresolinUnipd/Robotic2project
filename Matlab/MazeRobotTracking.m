@@ -3,7 +3,7 @@ close all
 clc
 addpath("./MazeSolveUtils/")
 addpath("./ControlUtils/")
-rng(10)
+rng(4)
 
 %% Parameters
 dt = 0.01;
@@ -155,10 +155,11 @@ for k = 1:length(t)
     ddy_d = ddyd(k);
 
     tmp = world2grid(mazeMap,[x_curr, y_curr]);
+    target_tmp = world2grid(mazeMap,[70, 5]);
     xtemp = tmp(1); ytemp = tmp(2);
-    if (abs(xtemp - 38) < 15/2) && (abs(ytemp - 38) < 15/2)
-        target = struct("x",7.5, "y", 7.5, "theta", 0 );
-        gains = struct("kp",30, "kw", 300);
+    if (abs(xtemp - 12) < 25/2) && (abs(ytemp - 58) < 25/2)
+        target = struct("x", target_tmp(1), "y", target_tmp(2), "theta", 0 );
+        gains = struct("kv",5, "kw", 3, "kd", 2);
         [v, w] = regulation_controller(x_curr,y_curr,theta_curr, target, gains);
     else
         % Differential Flatness

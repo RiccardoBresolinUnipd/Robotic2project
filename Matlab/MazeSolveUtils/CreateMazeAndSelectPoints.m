@@ -28,7 +28,7 @@ function [mazeMap, occupancyMatrixPlot, startGrid, goalGrid, figureMaze, axesMaz
 
     % goalRow = max(1, min(rowCount, round(goalY)));
     % goalCol = max(1, min(colCount, round(goalX)));
-    goalRow = 38; goalCol = 38;
+    goalRow = 5; goalCol = 70;
 
     if occupancyMatrixPlot(goalRow, goalCol) == 1
         error('Selected GOAL point is a wall.');
