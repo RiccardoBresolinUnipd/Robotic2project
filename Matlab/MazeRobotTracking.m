@@ -22,7 +22,7 @@ mazeProps.mapResolution = 5;
 
 % Create Maze and Interactively Select Start/Goal Points
 [mazeMap, occupancyMatrixPlot, startGrid, goalGrid, figureMaze, axesMaze] = ...
-    CreateMazeAndSelectPoints(mazeProps);
+    CreateMazeAndSelectPoints(mazeProps, "fixed");
 
 % Solve Maze Using A* Algorithm
 [pathGrid, plannedPathWorldSmooth] = SolveMazeAStar(mazeMap, startGrid, goalGrid);
@@ -154,11 +154,8 @@ for k = 1:length(t)
     ddx_d = ddxd(k);
     ddy_d = ddyd(k);
 
-    tmp = world2grid(mazeMap,[x_curr, y_curr]);
-    target_tmp = world2grid(mazeMap,[70, 5]);
-    xtemp = tmp(1); ytemp = tmp(2);
-    if (abs(xtemp - 12) < 25/2) && (abs(ytemp - 58) < 25/2)
-        target = struct("x", target_tmp(1), "y", target_tmp(2), "theta", 0 );
+    if (x_curr > 10 ) && ( y_curr > 10)
+        target = struct("x", 13, "y", 13, "theta", pi/2 );
         gains = struct("kv",5, "kw", 3, "kd", 2);
         [v, w] = regulation_controller(x_curr,y_curr,theta_curr, target, gains);
     else
