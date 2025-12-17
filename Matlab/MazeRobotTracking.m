@@ -74,15 +74,12 @@ yLimits = mazeMap.YWorldLimits;
 pathXgrid = (xd - xLimits(1)) * mapRes + 0.5;
 pathYgrid = (yLimits(2) - yd) * mapRes + 0.5;
 
-% Convert Start/Goal to Grid Coordinates
-startWorld = grid2world(mazeMap, startGrid);
-goalWorld  = grid2world(mazeMap, goalGrid);
+% Extract Start/Goal in Grid Coordinates
+startXgrid = startGrid(2);
+startYgrid = startGrid(1);
 
-startXgrid = (startWorld(1) - xLimits(1)) * mapRes + 0.5;
-startYgrid = (yLimits(2) - startWorld(2)) * mapRes + 0.5;
-
-goalXgrid = (goalWorld(1) - xLimits(1)) * mapRes + 0.5;
-goalYgrid = (yLimits(2) - goalWorld(2)) * mapRes + 0.5;
+goalXgrid = goalGrid(2);
+goalYgrid = goalGrid(1);
 
 % Plot Path, Start, and Goal on Maze
 plot(axesMaze, pathXgrid, pathYgrid, 'r--', 'LineWidth', 1.5);
@@ -146,19 +143,20 @@ for k = 1:length(t)
     y(k) = y_curr;
     theta(k) = theta_curr;
 
-    % Desired Trajectory
-    x_d   = xd(k);
-    y_d   = yd(k);
-    dx_d  = dxd(k);
-    dy_d  = dyd(k);
-    ddx_d = ddxd(k);
-    ddy_d = ddyd(k);
-
     if (x_curr > 10 ) && ( y_curr > 10)
-        target = struct("x", 13, "y", 13, "theta", pi/2 );
+        goalWorld = grid2world(mazeMap,goalGrid);
+        target = struct("x", goalWorld(1), "y", goalWorld(2), "theta", pi/2 );
         gains = struct("kv",5, "kw", 3, "kd", 2);
         [v, w] = regulation_controller(x_curr,y_curr,theta_curr, target, gains);
     else
+        % Desired Trajectory
+        x_d   = xd(k);
+        y_d   = yd(k);
+        dx_d  = dxd(k);
+        dy_d  = dyd(k);
+        ddx_d = ddxd(k);
+        ddy_d = ddyd(k);
+        
         % Differential Flatness
         [x_d, y_d, theta_d, vd, wd] = differential_flatness(x_d, y_d, dx_d, dy_d, ddx_d, ddy_d);
 

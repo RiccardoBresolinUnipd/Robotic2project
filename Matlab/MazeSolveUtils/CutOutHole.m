@@ -1,8 +1,8 @@
 function mazeMap = CutOutHole(mazeMap)
-    %% Set empty space at center of the maze
+    %% Set empty space at the bottom-right of the maze
 
     hole = round(mazeMap.GridSize / 3);
-    topleft = fliplr(round((mazeMap.GridSize - hole - [1,1]*2 ) /(mazeMap.Resolution)));
+    topleft = fliplr(round((mazeMap.GridSize - hole) /(mazeMap.Resolution)));
     
     matrix = zeros(hole);
     % --- walls ---
@@ -15,5 +15,5 @@ function mazeMap = CutOutHole(mazeMap)
 
     % topleft -> [x, y]
 
-    setOccupancy(mazeMap, topleft, matrix);
+    setOccupancy(mazeMap, topleft, matrix, "world");
 end
