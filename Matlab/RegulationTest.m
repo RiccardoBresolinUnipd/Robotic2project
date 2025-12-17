@@ -12,7 +12,7 @@ y_curr = 0;
 theta_curr = 0;
 
 target = struct("x",2, "y", 1, "theta", pi );
-gains = struct("kv",3, "kw", 5, "kd", 5);
+gains = struct("kv",5, "kw", 8, "kd", 2);
 
 % Vectors to save the simulation
 x = zeros(length(t),1);

@@ -23,6 +23,7 @@ mazeProps.mapResolution = 5;
 % Create Maze and Interactively Select Start/Goal Points
 [mazeMap, occupancyMatrixPlot, startGrid, goalGrid, figureMaze, axesMaze] = ...
     CreateMazeAndSelectPoints(mazeProps, "fixed");
+goalWorld = grid2world(mazeMap,goalGrid);
 
 % Solve Maze Using A* Algorithm
 [pathGrid, plannedPathWorldSmooth] = SolveMazeAStar(mazeMap, startGrid, goalGrid);
@@ -32,6 +33,10 @@ close(figureMaze);
 %% Parse Path
 % Parse Path to Match Simulation Time Points
 [xd, yd, dxd, dyd, ddxd, ddyd] = ParsePath(plannedPathWorldSmooth, t, dt);
+
+lastT = find(xd > 10 & yd > 10, 1);
+xd = xd(1:lastT);
+yd = yd(1:lastT);
 
 % Get Starting Position from Path
 x_curr = xd(1);
@@ -46,8 +51,8 @@ theta = zeros(length(t),1);
 %% Visualization Setup
 fig = figure('Name', 'Robot Tracking', 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
 
-% Subplot 1: Maze (Left Side - Spans Both Rows)
-axesMaze = subplot(2, 2, [1, 3]);
+% Subplot 1: Maze (Left Left)
+axesMaze = subplot(2, 2, 1);
 pacmanColorMap = [0 0 0; 0.1294 0.1294 1];
 
 % Plot Maze on Subplot
@@ -105,17 +110,17 @@ hold(axesPos, 'on');
 grid(axesPos, 'on');
 
 % X Position - Desired and Actual
-xDesiredPlot = plot(axesPos, t, xd, 'r--', 'LineWidth', 1.5);
+xDesiredPlot = plot(axesPos, t(1:lastT), xd, 'r--', 'LineWidth', 1.5);
 xActualPlot = plot(axesPos, t(1), x_curr, 'r-', 'LineWidth', 2);
 
 % Y Position - Desired and Actual
-yDesiredPlot = plot(axesPos, t, yd, 'b--', 'LineWidth', 1.5);
+yDesiredPlot = plot(axesPos, t(1:lastT), yd, 'b--', 'LineWidth', 1.5);
 yActualPlot = plot(axesPos, t(1), y_curr, 'b-', 'LineWidth', 2);
 xlabel(axesPos, 'Time (s)');
 ylabel(axesPos, 'Position (m)');
 title(axesPos, 'X and Y Position Trajectories');
 legend(axesPos, 'X Desired', 'X Actual', 'Y Desired', 'Y Actual', 'Location', 'nw');
-xlim(axesPos, [0, T]);
+xlim(axesPos, [0, t(lastT)]);
 
 % Subplot 4: X and Y Tracking Errors (Bottom Right)
 axesError = subplot(2, 2, 4);
@@ -132,8 +137,26 @@ xlabel(axesError, 'Time (s)');
 ylabel(axesError, 'Tracking Error (m)');
 title(axesError, 'X and Y Tracking Errors');
 legend(axesError, 'Zero Reference', 'X Error', 'Y Error', 'Location', 'nw');
-xlim(axesError, [0, T]);
+xlim(axesError, [0, t(lastT)]);
 ylim(axesError, [-0.35, 0.35]);
+
+% Subplot 3: Rho and Theta Parking Errors (Bottom left)
+parkingError = subplot(2, 2, 3);
+hold(parkingError, 'on');
+grid(parkingError, 'on');
+
+% Zero reference line
+plot(parkingError, [t(lastT+1), T], [0, 0], 'k--', 'LineWidth', 1);
+
+% Initialize error plots
+rhoErrorPlot = plot(parkingError, t(lastT+1), 0, 'r-', 'LineWidth', 2);
+thetaErrorPlot = plot(parkingError, t(lastT+1), 0, 'b-', 'LineWidth', 2);
+xlabel(parkingError, 'Time (s)');
+ylabel(parkingError, 'Tracking Error (m)');
+title(parkingError, 'Rho and Theta Parking Errors');
+legend(parkingError, 'Zero Reference', 'Rho Error', 'Theta Error', 'Location', 'ne');
+xlim(parkingError, [t(lastT+1), T]);
+ylim(parkingError, [-1, 3.5]);
 
 %% Simulation
 for k = 1:length(t)
@@ -144,10 +167,16 @@ for k = 1:length(t)
     theta(k) = theta_curr;
 
     if (x_curr > 10 ) && ( y_curr > 10)
-        goalWorld = grid2world(mazeMap,goalGrid);
+        % parking target
         target = struct("x", goalWorld(1), "y", goalWorld(2), "theta", pi/2 );
-        gains = struct("kv",5, "kw", 3, "kd", 2);
+        gains = struct("kv",5, "kw", 8, "kd", 2);
+
+        % Parking Controller
         [v, w] = regulation_controller(x_curr,y_curr,theta_curr, target, gains);
+        
+        % Update Rho and Theta Error Plots
+        set(rhoErrorPlot, 'XData', t(lastT+1:k), 'YData', sqrt((x(lastT+1:k)-target.x).^2 + (y(lastT+1:k)-target.y).^2));
+        set(thetaErrorPlot, 'XData', t(lastT+1:k), 'YData', target.theta - theta(lastT+1:k));
     else
         % Desired Trajectory
         x_d   = xd(k);
@@ -162,8 +191,18 @@ for k = 1:length(t)
 
         % Tracking Controller
         [v, w] = tracking_controller(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, vd, wd, linear);
+
+        % Update X and Y Position Plots
+        set(xActualPlot, 'XData', t(1:k), 'YData', x(1:k));
+        set(yActualPlot, 'XData', t(1:k), 'YData', y(1:k));
+
+        % Calculate and Update X and Y Tracking Error Plots
+        xError = xd(1:k) - x(1:k);
+        yError = yd(1:k) - y(1:k);
+        set(xErrorPlot, 'XData', t(1:k), 'YData', xError);
+        set(yErrorPlot, 'XData', t(1:k), 'YData', yError);
     end
-    
+
     % Unicycle Model
     [x_curr, y_curr, theta_curr] = unicycle_model(x_curr, y_curr, theta_curr, v, w, dt);
 
@@ -174,16 +213,6 @@ for k = 1:length(t)
 
     % Update Robot Traveled Path
     addpoints(robotPathLine, robotXgrid, robotYgrid);
-
-    % Update X and Y Position Plots
-    set(xActualPlot, 'XData', t(1:k), 'YData', x(1:k));
-    set(yActualPlot, 'XData', t(1:k), 'YData', y(1:k));
-
-    % Calculate and Update X and Y Tracking Error Plots
-    xError = xd(1:k) - x(1:k);
-    yError = yd(1:k) - y(1:k);
-    set(xErrorPlot, 'XData', t(1:k), 'YData', xError);
-    set(yErrorPlot, 'XData', t(1:k), 'YData', yError);
 
     drawnow limitrate
 end
