@@ -3,6 +3,7 @@ arguments
     mazeProps 
     choice      (1,:) string {mustBeMember(choice, ["manual", "fixed"])} = "manual"
 end
+    global RANDOM_SEED
 
     mazeMap = CreateMaze(mazeProps);
     occupancyMatrixPlot = occupancyMatrix(mazeMap);
@@ -12,7 +13,16 @@ end
 
     switch choice
         case "fixed"
-            startRow = 20; startCol = 40;
+            switch RANDOM_SEED
+                case 4
+                    startRow = 20; startCol = 40;
+                case 15
+                    startRow = 65; startCol = 5;
+                case 20
+                    startRow = 40; startCol = 40;
+                case 25
+                    startRow = 29; startCol = 61;
+            end
             goalRow = 10; goalCol = 65;
             assert(occupancyMatrixPlot(startRow, startCol) == 0, 'Selected START point is a wall.');
             assert(occupancyMatrixPlot(goalRow, goalCol) == 0, 'Selected GOAL point is a wall.');

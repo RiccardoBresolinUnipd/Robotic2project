@@ -3,7 +3,13 @@ close all
 clc
 addpath("./MazeSolveUtils/")
 addpath("./ControlUtils/")
-rng(4)
+
+list = {'4','15','20','25'};
+[indx,tf] = listdlg('PromptString','Select random seed:', ...
+    'SelectionMode','single','InitialValue',1, 'ListSize',[150,100], 'ListString',list);
+global RANDOM_SEED
+RANDOM_SEED = str2num(list{indx});
+rng(RANDOM_SEED)
 
 %% Parameters
 dt = 0.01;
@@ -168,7 +174,7 @@ for k = 1:length(t)
 
     if (x_curr > 10 ) && ( y_curr > 10)
         % parking target
-        target = struct("x", goalWorld(1), "y", goalWorld(2), "theta", pi/2 );
+        target = struct("x", goalWorld(1), "y", goalWorld(2), "theta", 2*pi/3 );
         gains = struct("kv",5, "kw", 8, "kd", 2);
 
         % Parking Controller
