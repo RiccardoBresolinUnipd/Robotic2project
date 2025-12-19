@@ -15,43 +15,36 @@ theta_curr = 0;
 linear = true;      % true = linear controller  - false = non-linear controller
 
 % Vectors to save the simulation
-x = zeros(length(t),1);
-y = zeros(length(t),1);
-theta = zeros(length(t),1);
-v_r = zeros(length(t),1);
-w_r = zeros(length(t),1);
+p = struct("x", zeros(length(t),1), "theta", zeros(length(t),1),"y", zeros(length(t),1));
+v_r = zeros(length(t),2);
+w_r = zeros(length(t),2);
 
 %% ---------------- Trajectory ----------------------
-list = {"custom","square","triangle", "oval", "circle"};
-[indx,tf] = listdlg('PromptString','Select random seed:', ...
-    'SelectionMode','single','InitialValue',1, 'ListSize',[150,100], 'ListString',list);
+% list = {"custom","square","triangle", "oval", "circle"};
+% [indx,tf] = listdlg("Name","Trajectory",'PromptString','Select shape:', ...
+%     'SelectionMode','single','InitialValue',1, 'ListSize',[150,100], 'ListString',list);
 
-[xd, yd, dxd, dyd, ddxd, ddyd] = trajectory(x_curr, y_curr, t,list{indx});
+[xd, yd, dxd, dyd, ddxd, ddyd] = trajectory(x_curr, y_curr, t, "square"); %list{indx});
 
 %% ---------------- Simulation ----------------------
 for k = 1:length(t)
     
     % State
-    x(k) = x_curr;
-    y(k) = y_curr;
-    theta(k) = theta_curr;
+    p.x(k) = x_curr; p.y(k) = y_curr; p.theta(k) = theta_curr;
 
     % Desired trajectory
-    x_d = xd(k);
-    y_d = yd(k);
-    dx_d = dxd(k);
-    dy_d = dyd(k);
-    ddx_d = ddxd(k);
-    ddy_d = ddyd(k);
+    x_d     = xd(k);      y_d   = yd(k);
+    dx_d    = dxd(k);     dy_d  = dyd(k);
+    ddx_d   = ddxd(k);    ddy_d = ddyd(k);
 
     % Differential flatness
     [x_d, y_d, theta_d, vd, wd] = differential_flatness(x_d, y_d, dx_d, dy_d, ddx_d, ddy_d);
     % theta_d = wrapToPi(theta_d);
 
     % Tracking controller
-    [v, w] = tracking_controller_oe(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, vd, wd, linear);
-    v_r(k) = v;
-    w_r(k) = w;
+    [v, w, y_real, y_des] = tracking_controller_oe(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, vd, wd, linear);
+    v_r(k,:) = y_real';
+    w_r(k,:) = y_des';
 
     % unicycle
     [x_curr, y_curr, theta_curr] = unicycle_model(x_curr, y_curr, theta_curr, v, w, dt);
@@ -67,7 +60,7 @@ hold(axesMaze, 'on');
 grid(axesMaze, 'on');
 axis(axesMaze, "square");
 plot(axesMaze, xd, yd, 'r--', 'LineWidth',1.5);
-plot(axesMaze, x, y, 'b', 'LineWidth',2);
+plot(axesMaze, p.x, p.y, 'b', 'LineWidth',2);
 legend("Desired Trajectory", "Robot");
 title("Tracking");
 xlabel("x"); ylabel("y");
@@ -75,14 +68,14 @@ xlabel("x"); ylabel("y");
 axesMaze = subplot(2, 2, 3);
 hold(axesMaze, 'on');
 grid(axesMaze, 'on');
-plot(axesMaze, t, w_r); legend("w")
+plot(axesMaze, t, w_r(:,2) - v_r(:,2)); legend("w")
 
 axesMaze = subplot(2, 2, 2);
 hold(axesMaze, 'on');
 grid(axesMaze, 'on');
-plot(axesMaze, t, x - xd', t, y-yd'); legend("x", "y") %, "xdes", "ydes")
+plot(axesMaze, t, p.x - xd', t, p.y-yd'); legend("x", "y") %, "xdes", "ydes")
 
 axesMaze = subplot(2, 2, 4);
 hold(axesMaze, 'on');
 grid(axesMaze, 'on');
-plot(axesMaze, t, theta);
+plot(axesMaze, t, p.theta);

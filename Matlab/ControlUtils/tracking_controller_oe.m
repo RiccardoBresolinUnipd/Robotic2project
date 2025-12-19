@@ -1,10 +1,10 @@
-function [v, w] = tracking_controller_oe(xd, yd, thetad, x, y, theta, vd, wd, linear)
+function [v, w, y_real, y_des] = tracking_controller_oe(xd, yd, thetad, x, y, theta, vd, wd, linear)
 
 eps_v = 1e-6;
 b = 0.75;
 
 T = [cos(theta), -b*sin(theta);
-              sin(theta),   b*cos(theta)];
+    sin(theta),   b*cos(theta)];
 
 Tinv = [cos(theta), sin(theta);
     -sin(theta)/b,  cos(theta)/b];
