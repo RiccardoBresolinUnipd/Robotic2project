@@ -40,7 +40,7 @@ close(figureMaze);
 % Parse Path to Match Simulation Time Points
 [xd, yd, dxd, dyd, ddxd, ddyd] = ParsePath(plannedPathWorldSmooth, t, dt);
 
-lastT = find(xd > 10 & yd > 10, 1);
+lastT = find(xd > 10.5 & yd > 10.5, 1);
 xd = xd(1:lastT);
 yd = yd(1:lastT);
 
@@ -144,7 +144,7 @@ ylabel(axesError, 'Tracking Error (m)');
 title(axesError, 'X and Y Tracking Errors');
 legend(axesError, 'Zero Reference', 'X Error', 'Y Error', 'Location', 'nw');
 xlim(axesError, [0, t(lastT)]);
-ylim(axesError, [-0.35, 0.35]);
+% ylim(axesError, [-0.35, 0.35]);
 
 % Subplot 3: Rho and Theta Parking Errors (Bottom left)
 parkingError = subplot(2, 2, 3);
@@ -196,7 +196,7 @@ for k = 1:length(t)
         [x_d, y_d, theta_d, vd, wd] = differential_flatness(x_d, y_d, dx_d, dy_d, ddx_d, ddy_d);
 
         % Tracking Controller
-        [v, w] = tracking_controller(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, vd, wd, linear);
+        [v, w] = tracking_controller_oe(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, vd, wd, linear);
 
         % Update X and Y Position Plots
         set(xActualPlot, 'XData', t(1:k), 'YData', x(1:k));

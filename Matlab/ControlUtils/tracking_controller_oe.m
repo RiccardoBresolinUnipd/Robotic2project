@@ -9,13 +9,13 @@ T = [cos(theta), -b*sin(theta);
 Tinv = [cos(theta), sin(theta);
     -sin(theta)/b,  cos(theta)/b];
 
-y_real = [x; y] + b*[cos(theta); sin(theta)];
-y_des = [xd; yd] + 0*[cos(thetad); sin(thetad)];
-yd_des = T * [vd; wd];
+y_real  = [x; y] + b*[cos(theta); sin(theta)];
+y_des   = [xd; yd] + b*[cos(thetad); sin(thetad)];
+yd_des  = T * [vd; wd];
 
-K = [1; 1] * 2;
+K = [1; 1] * 10;
 
-u = K .* (y_des - y_real); % + yd_des;
+u = K .* (y_des - y_real) + yd_des;
 
 % ---- input transformation ----
 v = Tinv(1,:) * u;
