@@ -11,8 +11,9 @@ x_curr = 0;
 y_curr = 0;
 theta_curr = 0;
 
-target = struct("x",2, "y", 1, "theta", pi );
-gains = struct("kv",5, "kw", 8, "kd", 2);
+input_target = inputdlg({'X','Y','THETA'},'Target', [1 50; 1 12; 1 7]);
+target = cell2struct(cellfun(@str2num,input_target, UniformOutput=false) ,["x", "y", "theta"]);
+gains = struct("kv",5, "kw", 5, "kd", 2);
 
 % Vectors to save the simulation
 x = zeros(length(t),1);

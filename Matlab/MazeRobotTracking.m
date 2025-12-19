@@ -100,7 +100,7 @@ plot(axesMaze, goalXgrid, goalYgrid, 'ro', 'MarkerSize', 8, 'LineWidth', 2);
 % Initialize Robot Plot (Yellow Dot - Like Pacman)
 robotXgrid = (x_curr - xLimits(1)) * mapRes + 0.5;
 robotYgrid = (yLimits(2) - y_curr) * mapRes + 0.5;
-robotPlot = plot(axesMaze, robotXgrid, robotYgrid, 'yo', 'MarkerSize', 10, ...
+robotPlot = plot(axesMaze, robotXgrid, robotYgrid, 'y-', 'MarkerSize', 1, ...
     'MarkerFaceColor', 'y', 'LineWidth', 2);
 
 % Initialize AnimatedLine for Robot Traveled Path (Yellow)
@@ -215,7 +215,8 @@ for k = 1:length(t)
     % Update Robot Visualization
     robotXgrid = (x_curr - xLimits(1)) * mapRes + 0.5;
     robotYgrid = (yLimits(2) - y_curr) * mapRes + 0.5;
-    set(robotPlot, 'XData', robotXgrid, 'YData', robotYgrid);
+    [robXplot, robYplot] = UnicycleView(robotXgrid,robotYgrid, -theta_curr , 0.1);
+    set(robotPlot, 'XData', robXplot, 'YData', robYplot);
 
     % Update Robot Traveled Path
     addpoints(robotPathLine, robotXgrid, robotYgrid);
