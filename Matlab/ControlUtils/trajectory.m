@@ -4,7 +4,7 @@ arguments
     y       (1,1) double
     t       (1,:) double
     type    (1,:) {mustBeMember(type, ...
-        ["custom","square","triangle", "oval"])} = "custom"
+        ["custom","square","triangle", "oval", "circle"])} = "custom"
 end
 
 s = linspace(0,1,length(t));
@@ -35,6 +35,9 @@ switch type
         s_control = linspace(0,1,length(Px));
         ppx = griddedInterpolant(s_control, Px, 'spline');
         ppy = griddedInterpolant(s_control, Py, 'spline');
+    case "circle"
+        ppx = @(theta) cos(2*pi*theta/s(end) - pi/2);
+        ppy = @(theta) sin(2*pi*theta/s(end) - pi/2) + 1;
 end
 
 % ---- evaluation of the interpolants ----

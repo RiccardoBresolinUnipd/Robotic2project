@@ -20,7 +20,11 @@ y = zeros(length(t),1);
 theta = zeros(length(t),1);
 
 %% ---------------- Trajectory ----------------------
-[xd, yd, dxd, dyd, ddxd, ddyd] = trajectory(x_curr, y_curr, t,"oval");
+list = {"custom","square","triangle", "oval", "circle"};
+[indx,tf] = listdlg('PromptString','Select random seed:', ...
+    'SelectionMode','single','InitialValue',1, 'ListSize',[150,100], 'ListString',list);
+
+[xd, yd, dxd, dyd, ddxd, ddyd] = trajectory(x_curr, y_curr, t,list{indx});
 
 %% ---------------- Simulation ----------------------
 for k = 1:length(t)
