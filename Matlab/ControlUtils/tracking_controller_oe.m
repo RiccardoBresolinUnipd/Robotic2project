@@ -1,17 +1,17 @@
 function [v, w] = tracking_controller_oe(xd, yd, thetad, x, y, theta, vd, wd, linear)
 
 eps_v = 1e-6;
-b = 0.75;
+b = 0.2;
 
 T = [cos(theta), -b*sin(theta);
-              sin(theta),   b*cos(theta)];
+     sin(theta),   b*cos(theta)];
 
 Tinv = [cos(theta), sin(theta);
     -sin(theta)/b,  cos(theta)/b];
 
 y_real = [x; y] + b*[cos(theta); sin(theta)];
-y_des = [xd; yd] + b*[cos(thetad); sin(thetad)];
-yd_des = T * [vd; wd];
+y_des = [xd; yd]; % + b*[cos(thetad); sin(thetad)];
+yd_des = [vd; wd]*0;
 
 K = [1; 1] * 50;
 
