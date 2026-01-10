@@ -58,7 +58,7 @@ for kbp=1:length(set_bpoints)
         thetad(k, kbp) = theta_d;
         % Tracking controller
         [v, w] = tracking_controller_oe(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, ...
-            dx_d, dy_d,wd, type=opts.type, b=opts.b, K=opts.K);
+            vd,wd, opts.type, b=opts.b, K=opts.K);
         v_r(k, kbp) = v;
         w_r(k, kbp) = w;
 

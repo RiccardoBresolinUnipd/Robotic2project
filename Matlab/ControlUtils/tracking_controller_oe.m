@@ -1,4 +1,4 @@
-function [v, w] = tracking_controller_oe(xd, yd, thetad, x, y, theta, dx_d, dy_d, wd, opts)
+function [v, w] = tracking_controller_oe(xd, yd, thetad, x, y, theta, vd, wd, type, opts)
 arguments
     xd
     yd
@@ -6,10 +6,9 @@ arguments
     x
     y
     theta
-    dx_d
-    dy_d
+    vd
     wd
-    opts.type  {mustBeMember(opts.type, ["c_on_B", "c_on_CM"])} = "c_on_B"
+    type  {mustBeMember(type, ["c_on_B", "c_on_CM"])}
     opts.b = 0.2
     opts.K = 2
 end
@@ -24,17 +23,17 @@ Tinv = [cos(theta), sin(theta);
 
 y_real = [x; y] + T(theta) * [b; 0];
 
-switch opts.type
+switch type
     case "c_on_CM"
         % modification of the desired trajectory such that the CM is closer
         % to the desired trajectory.
-        y_des  = [xd;   yd]     + T(thetad) * [b; 0];
-        yd_des = [dx_d; dy_d]   + T(thetad) * [0; wd];
+        y_des  = [xd; yd] + T(thetad) * [b; 0];
+        yd_des = T(thetad) * [vd; wd];
     case "c_on_B"
         % the trajectory is considered as the desired trajectory of the B
         % point
-        y_des  = [xd; yd]    ;
-        yd_des = [dx_d; dy_d];
+        y_des  = [xd; yd];
+        yd_des = T(thetad) * [vd; 0]; 
 end
 
 K = [1; 1] * opts.K;
