@@ -2,17 +2,20 @@ clear; close all; clc;
 addpath("./ControlUtils/")
 
 %% ------------------ Parameters ----------------------
-dt = 0.001;          
+dt = 0.001;
 T  = 30;            % time
 t  = 0:dt:T;
+
+% controller options
+opts.b = 0.2;
+opts.K = 2;
+opts.type = "c_on_B"; % "c_on_B", "c_on_CM"
+b = 0.2;
 
 % Starting position
 x_curr = 0;
 y_curr = 0;
 theta_curr = 0;
-
-% controller
-linear = false;      % true = linear controller  - false = non-linear controller
 
 % Vectors to save the simulation
 x = zeros(length(t),1);
@@ -23,15 +26,15 @@ v_r = zeros(length(t),1);
 w_r = zeros(length(t),1);
 
 %% ---------------- Trajectory ----------------------
-list = {"custom","square","square-corner","triangle", "oval", "circle"};
-[indx,tf] = listdlg('PromptString','Select random seed:', ...
-    'SelectionMode','single','InitialValue',1, 'ListSize',[150,100], 'ListString',list);
-
+list = {"custom","square","triangle", "oval", "circle"};
+% [indx,tf] = listdlg('PromptString','Select random seed:', ...
+%     'SelectionMode','single','InitialValue',1, 'ListSize',[150,100], 'ListString',list);
+indx = 2;
 [xd, yd, dxd, dyd, ddxd, ddyd] = trajectory(x_curr, y_curr, t,list{indx});
 
 %% ---------------- Simulation ----------------------
 for k = 1:length(t)
-    
+
     % State
     x(k) = x_curr;
     y(k) = y_curr;
@@ -47,8 +50,11 @@ for k = 1:length(t)
 
     % Differential flatness
     [x_d, y_d, theta_d, vd, wd] = differential_flatness(x_d, y_d, dx_d, dy_d, ddx_d, ddy_d);
+    % theta_d = wrapToPi(theta_d);
+    thetad(k) = theta_d;
     % Tracking controller
-    [v, w] = tracking_controller(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, vd, wd, linear);
+    [v, w] = tracking_controller_oe(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, ...
+        dx_d, dy_d,wd, type=opts.type, b=opts.b, K=opts.K);
     v_r(k) = v;
     w_r(k) = w;
 
@@ -56,6 +62,8 @@ for k = 1:length(t)
     [x_curr, y_curr, theta_curr] = unicycle_model(x_curr, y_curr, theta_curr, v, w, dt);
 
 end
+
+
 %% -------------------- PLOT RESULTS ---------------------------
 fig = figure('Name', 'Robot Tracking', 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
 
@@ -66,7 +74,9 @@ grid(axesMaze, 'on');
 axis(axesMaze, "equal");
 plot(axesMaze, xd, yd, 'r--', 'LineWidth',1);
 plot(axesMaze, x, y, 'g', 'LineWidth',1.5);
-legend("Desired Trajectory", "Robot");
+plot(axesMaze, x + b * cos(theta), y + b * sin(theta) , 'y', 'LineWidth',2);
+plot(axesMaze, xd' + b * cos(thetad), yd' + b * sin(thetad));
+legend("Desired Trajectory", "Robot", "B-robot", "B-des");
 title("Tracking");
 xlabel("x"); ylabel("y");
 

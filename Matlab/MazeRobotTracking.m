@@ -196,7 +196,8 @@ for k = 1:length(t)
         [x_d, y_d, theta_d, vd, wd] = differential_flatness(x_d, y_d, dx_d, dy_d, ddx_d, ddy_d);
 
         % Tracking Controller
-        [v, w] = tracking_controller_oe(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, vd, wd, linear);
+        [v, w] = tracking_controller_oe(x_d, y_d, theta_d, x_curr, y_curr, theta_curr,dx_d, dy_d,wd);
+        % [v, w] = tracking_controller(x_d, y_d, theta_d, x_curr, y_curr, theta_curr,vd,wd,linear);
 
         % Update X and Y Position Plots
         set(xActualPlot, 'XData', t(1:k), 'YData', x(1:k));
