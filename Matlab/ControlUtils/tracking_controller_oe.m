@@ -24,14 +24,12 @@ Tinv = [cos(theta), sin(theta);
 y_real = [x; y] + T(theta) * [b; 0];
 
 switch type
-    case "c_on_CM"
-        % modification of the desired trajectory such that the CM is closer
-        % to the desired trajectory.
+    case "c_on_B"
+        % follow the virtual B-point of the trajectory
         y_des  = [xd; yd] + T(thetad) * [b; 0];
         yd_des = T(thetad) * [vd; wd];
-    case "c_on_B"
-        % the trajectory is considered as the desired trajectory of the B
-        % point
+    case "c_on_CM"
+        % follow the (CoM of) the trajectory, i.e. the trajectory itself
         y_des  = [xd; yd];
         yd_des = T(thetad) * [vd; 0]; 
 end

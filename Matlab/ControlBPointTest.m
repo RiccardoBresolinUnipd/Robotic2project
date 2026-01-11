@@ -11,7 +11,7 @@ set_bpoints = [0.2]; % [0.2 0.5 0.75];
 
 opts.b = set_bpoints(1);
 opts.K = 20;
-opts.type = "c_on_CM"; % "c_on_B", "c_on_CM"
+opts.type = "c_on_B"; % "c_on_B", "c_on_CM"
 
 
 % Starting position
@@ -70,7 +70,7 @@ for kbp=1:length(set_bpoints)
 end
 
 %% save
-save(list{indx}+"_"+opts.type, "x","y","theta", "v_r", "w_r", ...
+save(".\collected_data\"+list{indx}+"_"+opts.type, "x","y","theta", "v_r", "w_r", ...
     "xd", "yd", "dxd", "dyd", "ddxd", "ddyd", "thetad", "t", "dt", "opts", "set_bpoints", "list", "indx")
 
 return
@@ -85,13 +85,13 @@ if length(set_bpoints) ~= 1
     legend(["Desired" string(set_bpoints)], Location="northwest");
     xlabel("x"); ylabel("y");
     switch opts.type
-        case "c_on_CM"
-            xlim([1.7, 2.1]); ylim([-0.1, 0.3]);
         case "c_on_B"
+            xlim([1.7, 2.1]); ylim([-0.1, 0.3]);
+        case "c_on_CM"
             xlim([1.2, 2.1]); ylim([-0.1, 0.8]);
     end
 end
-return
+% return
 %% -------------------- PLOT RESULTS ---------------------------
 
 x       = x(:,1);
@@ -111,10 +111,10 @@ axis(axesMaze, "equal");
 plot(axesMaze, xd, yd, '--');
 plot(axesMaze, x, y, LineWidth=1);
 switch opts.type 
-    case "c_on_CM"
+    case "c_on_B"
         xlim(axesMaze, [1.8, 2.3]); ylim(axesMaze, [-0.1, 0.4]);
         plot(axesMaze, xd' + opts.b * cos(thetad), yd' + opts.b * sin(thetad), "--");
-    case "c_on_B"
+    case "c_on_CM"
         xlim(axesMaze, [1.6, 2.1]); ylim(axesMaze, [-0.1, 0.4]);
         plot(axesMaze, xd', yd', "--");
 end
