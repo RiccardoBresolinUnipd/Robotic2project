@@ -15,6 +15,7 @@ targ_vec(3).x = -1; targ_vec(3).y =  0; targ_vec(3).theta = 0;
 targ_vec(4).x = -1; targ_vec(4).y = -1; targ_vec(4).theta = 0;
 targ_vec(5).x = -1; targ_vec(5).y =  1; targ_vec(5).theta = 0;
 targ_vec(6).x =  1; targ_vec(6).y =  1; targ_vec(6).theta = 0;
+targ_vec(7).x =  0; targ_vec(7).y = -1; targ_vec(7).theta = pi/2;
 
 gains = struct("kv",1, "kw", 3.5, "kd", 3);
 
