@@ -6,7 +6,7 @@ arguments
     scale   (1,1) double {mustBePositive(scale)} = 0.3
 end
 triangle = [1, -0.5, -0.5, 1;
-            0, 0.5, -0.5, 0];
+            0, 0.5, -0.5, 0] * scale;
 
 % rotation matrix
 R = [cos(theta), -sin(theta);
