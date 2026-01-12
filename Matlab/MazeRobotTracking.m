@@ -16,10 +16,12 @@ dt = 0.01;
 T  = 25;            % tracking time
 t  = 0:dt:T;
 
-% Controller
-linear = true;      % true = linear controller  - false = non-linear controller
-                    % "c_on_CM" = controller on the CoM
-                    % "c_on_B"  = controller on B-point
+% Controller type:
+%   - "linear"      = linear controller
+%   - "non_linear"  = non-linear controller
+%   - "c_on_CM"     = follow the (trajectory) CoM
+%   - "c_on_B"      = follow the (trajectory) B-point
+type = "linear";
 
 %% Maze Setup
 % Maze Configuration Parameters
@@ -198,7 +200,7 @@ for k = 1:length(t)
     [x_d, y_d, theta_d, vd, wd] = differential_flatness(x_d, y_d, dx_d, dy_d, ddx_d, ddy_d);
 
     % Tracking Controller
-    [v, w] = tracking_controller(x_d, y_d, theta_d, x_curr, y_curr, theta_curr,vd,wd,linear);
+    [v, w] = tracking_controller(x_d, y_d, theta_d, x_curr, y_curr, theta_curr,vd,wd,type);
 
     % Update X and Y Position Plots
     set(xActualPlot, 'XData', t(1:k), 'YData', x(1:k));
