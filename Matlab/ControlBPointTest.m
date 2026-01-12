@@ -56,7 +56,7 @@ for kbp=1:length(set_bpoints)
         % theta_d = wrapToPi(theta_d);
         thetad(k, kbp) = theta_d;
         % Tracking controller
-        [v, w] = tracking_controller_oe(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, ...
+        [v, w] = tracking_controller(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, ...
             vd,wd, opts.type, b=opts.b, K=opts.K);
         v_r(k, kbp) = v;
         w_r(k, kbp) = w;

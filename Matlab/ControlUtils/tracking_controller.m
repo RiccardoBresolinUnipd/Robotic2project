@@ -13,7 +13,7 @@ arguments
     wd
     type  {mustBeMember(type, ["linear","non_linear", "c_on_B", "c_on_CM"])}
     opts.b = 0.2 % b-point distance
-    opts.K = 2   % b-point controller gain
+    opts.K = 20   % b-point controller gain
 end
 
 eps_v = 1e-6;
