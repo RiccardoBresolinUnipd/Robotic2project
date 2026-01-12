@@ -11,8 +11,12 @@ x_curr = 0;
 y_curr = 0;
 theta_curr = 0;
 
-% controller
-linear = true;      % true = linear controller  - false = non-linear controller
+% Controller type:
+%   - "linear"      = linear controller
+%   - "non_linear"  = non-linear controller
+%   - "c_on_CM"     = follow the (trajectory) CoM
+%   - "c_on_B"      = follow the (trajectory) B-point
+type = "c_on_B";
 
 % Vectors to save the simulation
 x = zeros(length(t),1);
@@ -49,7 +53,7 @@ for k = 1:length(t)
     % theta_d = wrapToPi(theta_d);
 
     % Tracking controller
-    [v, w] = tracking_controller_oe(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, vd, wd, linear);
+    [v, w] = tracking_controller(x_d, y_d, theta_d, x_curr, y_curr, theta_curr, vd, wd, type);
     v_r(k) = v;
     w_r(k) = w;
 
