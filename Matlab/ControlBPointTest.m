@@ -8,6 +8,7 @@ t  = 0:dt:T;
 
 % controller options
 set_bpoints = [0.2]; % [0.2 0.5 0.75];
+save = false;
 
 opts.b = set_bpoints(1);
 opts.K = 20;
@@ -29,14 +30,12 @@ w_r     = zeros(length(t),length(set_bpoints));
 
 %% ---------------- Trajectory ----------------------
 list = {"custom","square","triangle", "oval", "circle"};
-% [indx,tf] = listdlg('PromptString','Select random seed:', ...
-%     'SelectionMode','single','InitialValue',1, 'ListSize',[150,100], 'ListString',list);
 indx = 2;
 [xd, yd, dxd, dyd, ddxd, ddyd] = trajectory(x_curr, y_curr, t,list{indx});
 
+%% ---------------- Simulation ----------------------
 for kbp=1:length(set_bpoints)
     opts.b = set_bpoints(kbp);
-    %% ---------------- Simulation ----------------------
     for k = 1:length(t)
 
         % State
@@ -66,15 +65,13 @@ for kbp=1:length(set_bpoints)
         [x_curr, y_curr, theta_curr] = unicycle_model(x_curr, y_curr, theta_curr, v, w, dt);
 
     end
-
 end
-
-%% save
-save(".\collected_data\"+list{indx}+"_"+opts.type, "x","y","theta", "v_r", "w_r", ...
-    "xd", "yd", "dxd", "dyd", "ddxd", "ddyd", "thetad", "t", "dt", "opts", "set_bpoints", "list", "indx")
-
-return
-%%
+%% ---------------------- SAVE DATA ----------------------------
+if save
+    save(".\collected_data\"+list{indx}+"_"+opts.type, "x","y","theta", "v_r", "w_r", ...
+        "xd", "yd", "dxd", "dyd", "ddxd", "ddyd", "thetad", "t", "dt", "opts", "set_bpoints", "list", "indx")
+end
+%% ------------------- PLOT COMPARISON -------------------------
 if length(set_bpoints) ~= 1
     figure(Name="Comparison of B values")
     hold('on');
@@ -91,15 +88,15 @@ if length(set_bpoints) ~= 1
             xlim([1.2, 2.1]); ylim([-0.1, 0.8]);
     end
 end
-% return
 %% -------------------- PLOT RESULTS ---------------------------
+select_b_point = 1;
 
-x       = x(:,1);
-y       = y(:,1);
-theta   = theta(:,1);
-thetad  = thetad(:,1);
-v_r     = v_r(:,1);
-w_r     = w_r(:,1);
+x       = x(:,select_b_point);
+y       = y(:,select_b_point);
+theta   = theta(:,select_b_point);
+thetad  = thetad(:,select_b_point);
+v_r     = v_r(:,select_b_point);
+w_r     = w_r(:,select_b_point);
 
 fig = figure('Name', 'Robot Tracking', 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
 

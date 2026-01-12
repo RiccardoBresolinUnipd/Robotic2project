@@ -58,7 +58,7 @@ figure(Name="Input v")
 plot(t, cm.U(:,1), t, bp.U(:,1), LineWidth=1.5 )
 grid on; axis("square")
 if strcmp(shapes{select}, "square")
-    xlim(xlimts); 
+    xlim(xlimts);
 else
     ylim([0 1.5])
 end
@@ -72,7 +72,7 @@ figure(Name="Input w")
 plot(t, cm.U(:,2), t, bp.U(:,2), LineWidth=1.5 )
 grid on; axis("square")
 if strcmp(shapes{select}, "square")
-    xlim(xlimts); 
+    xlim(xlimts);
 else
     ylim([-2 2])
 end
@@ -82,33 +82,38 @@ if save
     exportgraphics(gcf, ".\corrected_images\" + shapes{select} + "_InputW.png", "Resolution",300)
 end
 
-%% plots trajectories
-save = true;
+%% plots trajectories with focus on "custom" shape
+if not(strcmp(shapes{select}, "custom"))
+    return
+end
 
-figure(Name="Trajectory"); 
+save = false;
+
+figure(Name="Trajectory");
 total = subplot(2,2,[1 3]);
 grid(total, "on"); hold(total,"on");
 plot(total, cm.X(:,1), cm.X(:,2), LineWidth=1.5 );
-plot(total, bp.X(:,1), bp.X(:,2), LineWidth=1.5 ); 
-plot(total, cm.Xd(:,1), cm.Xd(:,2), "--", LineWidth=3); 
-legend(total,"CoM", "Bp", "Desired"); xlabel("x [m]"); ylabel("y [m]");
+plot(total, cm.Xd(:,1), cm.Xd(:,2), "r--", LineWidth=2);
+plot(total, bp.X(:,1), bp.X(:,2), LineWidth=1.5 );
+legend(total,"CoM", "Desired", "Bp"); xlabel("x [m]"); ylabel("y [m]");
 
-zoom1 = subplot(2,2,2); 
+zoom1 = subplot(2,2,2);
 grid(zoom1, "on"); hold(zoom1,"on");
 xlim(zoom1, [2.2 4.2]); ylim(zoom1, [2 2.8]);
-plot(zoom1, cm.X(:,1), cm.X(:,2), LineWidth=1.5 ); 
+plot(zoom1, cm.X(:,1), cm.X(:,2), LineWidth=1.5 );
+plot(zoom1, cm.Xd(:,1), cm.Xd(:,2), "r--", LineWidth=2);
 plot(zoom1, bp.X(:,1), bp.X(:,2), LineWidth=1.5 );
-plot(zoom1, cm.Xd(:,1), cm.Xd(:,2), "--", LineWidth=3); 
-legend(zoom1, "CoM", "Bp", "Desired");
+legend(zoom1, "CoM", "Desired", "Bp");
 xlabel("x [m]"); ylabel("y [m]");
 
-zoom2 = subplot(2,2,4); 
+zoom2 = subplot(2,2,4);
 grid(zoom2, "on"); hold(zoom2,"on");
 xlim(zoom2, [4.2 5.2]); ylim(zoom2, [-3.8 -3]);
-plot(zoom2, cm.X(:,1), cm.X(:,2), LineWidth=1.5 ); 
+plot(zoom2, cm.X(:,1), cm.X(:,2), LineWidth=1.5 );
+plot(zoom2, cm.Xd(:,1), cm.Xd(:,2), "r--", LineWidth=2);
 plot(zoom2, bp.X(:,1), bp.X(:,2), LineWidth=1.5 );
-plot(zoom2, cm.Xd(:,1), cm.Xd(:,2), "--", LineWidth=3); 
-legend(zoom2, "CoM", "Bp", "Desired");
+
+legend(zoom2, "CoM", "Desired", "Bp");
 xlabel("x [m]"); ylabel("y [m]");
 
 
